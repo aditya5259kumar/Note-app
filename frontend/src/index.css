@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+
+@import "tailwindcss";
+
+@layer components {
+  .icon-btn {
+    @apply text-xl text-gray-300 cursor-pointer hover:text-blue-500;
+  }
+}
+
+@layer components {
+  .input-label {
+    @apply text-xs text-indigo-600;
+  }
+}
+
+* {
+  font-family: "Nunito", sans-serif;
+  /* font-family: "Delius", cursive; */
+}
+
+html {
+  scroll-behavior: smooth;
+}
