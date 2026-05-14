@@ -80,6 +80,8 @@ const Signup = () => {
 
       <div className="flex min-h-screen items-center justify-center  bg-linear-to-l from-indigo-200 via-violet-300 to-purple-200">
         <div className="w-96 shadow-2xl  rounded-2xl bg-white px-7 py-10">
+          
+            <h2 className="text-indigo-800 mb-4 text-xl  text-center font-bold">Welcome To Notely</h2>
           <form onSubmit={handleSignup}>
             <h4 className="text-center text-indigo-500 font-bold text-3xl mb-7">
               Signup
@@ -121,15 +123,15 @@ const Signup = () => {
             >
               Signup
             </button>
-            <button
+            {/* <button
               className="flex items-center justify-center gap-2 w-full text-gray-600 border border-gray-300 bg-white rounded p-2 my-1 mt-4 hover:bg-gray-100"
             >
               <FcGoogle className="text-xl" /> <span>Singup with Google</span>
-            </button>
+            </button> */}
 
             <p className="text-sm text-center mt-4">
-              Already have an Account?
-              <Link to="/login" className="font-medium text-blue-500 underline">
+              Already have an Account?{" "}
+              <Link to="/login" className="font-bold text-indigo-600">
                 Login.
               </Link>
             </p>
