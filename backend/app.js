@@ -27,7 +27,7 @@ var app = express();
 
 // handling cors policy issue
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://note-app-five-lilac.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
   credentials: true,
 };
