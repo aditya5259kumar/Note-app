@@ -61,13 +61,18 @@ const Login = () => {
   return (
     <>
       <Home />
-      <div className="absolute top-0 right-0 left-0 px-6 flex min-h-screen items-center justify-center bg-linear-to-l from-indigo-200 via-violet-300 to-purple-200">
-        <div className="w-96 border border-indigo-300 shadow-2xl  rounded-2xl bg-white px-7 py-10">
-            <h2 className="text-indigo-800 mb-4 text-xl  text-center font-bold">
-              Welcome To Notely
-            </h2>
+      <div className="absolute top-0 right-0 left-0 flex flex-colflex px-4 flex-col min-h-screen items-center justify-center bg-linear-to-l from-indigo-200 via-violet-300 to-purple-200">
+        <h2 className="text-indigo-700 mb-1 text-3xl  text-center font-extrabold">
+          Welcome To Notely
+        </h2>
+        <p className="text-center text-sm mb-4">
+          A fast and simple space for your notes and ideas.
+        </p>
+        <div className="sm:w-96 w-full border border-indigo-300 shadow-2xl  rounded-2xl bg-white px-7 py-10">
+          <h2 className="text-indigo-800 mb-4 text-xl  text-center font-bold">
+            Welcome To Notely
+          </h2>
           <form onSubmit={handleLogin}>
-
             <h4 className="text-center font-bold text-indigo-500 text-3xl mb-7">
               Login
             </h4>
