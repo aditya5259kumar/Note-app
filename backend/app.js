@@ -23,7 +23,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
-const port = process.env.PORT;
+// const port = process.env.PORT;
 
 // handling cors policy issue
 const corsOptions = {
@@ -73,8 +73,8 @@ app.get("/", (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-  console.log(`server is listening at http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`server is listening at http://localhost:${port}`);
+// });
 
 module.exports = app;
