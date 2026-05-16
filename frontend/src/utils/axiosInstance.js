@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "http://localhost:7000/api/user/auth";
+const BASE_URL = "https://note-app-ptlr.onrender.com/api/user/auth";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
