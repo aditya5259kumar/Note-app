@@ -13,6 +13,7 @@ import no_todo_yet from "../assets/no todo yet.png";
 
 const Home = () => {
   const [openAddEditModel, setOpenAddEditModel] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
@@ -130,6 +131,8 @@ const Home = () => {
   // get all notes
   const getAllNotes = async () => {
     try {
+      setLoading(true);
+
       const response = await axiosInstance.get("/getallnotes");
 
       if (response.data?.data) {
@@ -140,136 +143,162 @@ const Home = () => {
         localStorage.clear();
         navigate("/login");
       } else {
-        // console.error("Failed to fetch notes", error);
-        toast.error("Failed to fetch notes", error);
+        toast.error("Failed to fetch notes");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    getUserInfo();
-    getAllNotes();
-    return () => {};
+    async function loadData() {
+      await getUserInfo();
+      await getAllNotes();
+    }
+
+    loadData();
   }, []);
 
   return (
-    <div className="min-h-screen bg-violet-50/50">
-      <ToastContainer />
-      <Navbar
-        userInfo={userInfo}
-        searchNotes={searchNotes}
-        ProfileHandler={ProfileHandler}
-        getAllNotes={getAllNotes}
-      />
+    <>
+      {loading ? (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-violet-50">
+          <div className="w-12 h-12 border-4 border-violet-300 border-t-violet-700 rounded-full animate-spin"></div>
 
-      <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12  py-6 sm:py-8">
-          {allNotes.map((note) => (
-            <div
-              key={note._id}
-              onClick={() => handleViewNote(note)}
-              className="cursor-pointer"
-            >
-              <NoteCard
-                title={note.title}
-                content={note.content}
-                tags={note.tags.map((item, index) => (
-                  <span
-                    key={index}
-                    className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium hover:bg-indigo-600 hover:text-white transition-all duration-200"
-                  >
-                    {`#${item}`}
-                  </span>
-                ))}
-                isPinned={note.isPinned}
-                formattedDate={`${new Date(note.createdOn).toLocaleDateString(
-                  "en-GB",
-                  {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  }
-                )}`}
-                weekday={`${new Date(note.createdOn).toLocaleDateString(
-                  "en-GB",
-                  {
-                    weekday: "long",
-                  }
-                )}`}
-                onDelete={(e) => {
-                  e.stopPropagation();
-                  handleDelete(note);
-                }}
-                onEdit={(e) => {
-                  e.stopPropagation();
-                  handleEdit(note);
-                }}
-                onPinNote={(e) => {
-                  e.stopPropagation();
-                  handlePinNote(note);
-                }}
-              />
-            </div>
-          ))}
+          <p className="mt-6 text-violet-700 font-semibold text-lg">
+            Loading your notes...
+          </p>
+
+          <p className="text-sm text-violet-500 mt-2">
+            Please wait a few seconds
+          </p>
         </div>
-      </div>
+      ) : (
+        <div className="min-h-screen bg-violet-50/50">
+          <ToastContainer />
 
-      <button
-        className="cursor-pointer fixed right-6 bottom-6 shadow-2xl hover:-translate-y-1 transition-all
-            w-16 h-16 rounded-full 
-           flex items-center justify-center bg-linear-to-r from-indigo-600 to-purple-400"
-        onClick={() => {
-          setNoteToEdit(null);
-          setOpenAddEditModel(true);
-        }}
-      >
-        <RiStickyNoteAddFill className="text-[32px] text-white" />
-      </button>
-
-      {openAddEditModel && (
-        <AddEditNote
-          setOpenAddEditModel={setOpenAddEditModel}
-          getAllNotes={getAllNotes}
-          noteToEdit={noteToEdit}
-        />
-      )}
-
-      {showProfile && (
-        <UserProfile
-          userInfo={userInfo}
-          onLogout={onLogout}
-          setShowProfile={setShowProfile}
-        />
-      )}
-
-      {viewNoteModal && (
-        <ViewNoteModal
-          note={selectedNote}
-          onClose={() => setViewNoteModal(false)}
-        />
-      )}
-
-      {allNotes.length === 0 && (
-        <div className="min-h-auto flex flex-col items-center justify-center">
-          <img
-            src={isSearch ? not_found : no_todo_yet}
-            alt="No notes"
-            className="w-100 h-auto mb-4 "
+          <Navbar
+            userInfo={userInfo}
+            searchNotes={searchNotes}
+            ProfileHandler={ProfileHandler}
+            getAllNotes={getAllNotes}
           />
 
-          <div className="text-center px-4 max-w-md mx-auto">
-            <p className="text-2xl font-bold text-violet-800">
-              {isSearch ? "No results found!" : "No Notes yet!"}
-            </p>
-            <p className="mt-2 text-sm font-semibold text-violet-800">
-              {isSearch
-                ? "Try searching for a different keyword."
-                : "Create your first note by clicking the Add button below."}
-            </p>
+          <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 py-6 sm:py-8">
+              {allNotes.map((note) => (
+                <div
+                  key={note._id}
+                  onClick={() => handleViewNote(note)}
+                  className="cursor-pointer"
+                >
+                  <NoteCard
+                    title={note.title}
+                    content={note.content}
+                    tags={note.tags.map((item, index) => (
+                      <span
+                        key={index}
+                        className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium hover:bg-indigo-600 hover:text-white transition-all duration-200"
+                      >
+                        {`#${item}`}
+                      </span>
+                    ))}
+                    isPinned={note.isPinned}
+                    formattedDate={`${new Date(
+                      note.createdOn,
+                    ).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}`}
+                    weekday={`${new Date(note.createdOn).toLocaleDateString(
+                      "en-GB",
+                      {
+                        weekday: "long",
+                      },
+                    )}`}
+                    onDelete={(e) => {
+                      e.stopPropagation();
+                      handleDelete(note);
+                    }}
+                    onEdit={(e) => {
+                      e.stopPropagation();
+                      handleEdit(note);
+                    }}
+                    onPinNote={(e) => {
+                      e.stopPropagation();
+                      handlePinNote(note);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Empty State */}
+          {!loading && allNotes.length === 0 && (
+            <div className="min-h-auto flex flex-col items-center justify-center">
+              <img
+                src={isSearch ? not_found : no_todo_yet}
+                alt="No notes"
+                className="w-100 h-auto mb-4"
+              />
+
+              <div className="text-center px-4 max-w-md mx-auto">
+                <p className="text-2xl font-bold text-violet-800">
+                  {isSearch ? "No results found!" : "No Notes yet!"}
+                </p>
+
+                <p className="mt-2 text-sm font-semibold text-violet-800">
+                  {isSearch
+                    ? "Try searching for a different keyword."
+                    : "Create your first note by clicking the Add button below."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Add Note Button */}
+          <button
+            className="cursor-pointer fixed right-6 bottom-6 shadow-2xl hover:-translate-y-1 transition-all
+      w-16 h-16 rounded-full flex items-center justify-center
+      bg-linear-to-r from-indigo-600 to-purple-400"
+            onClick={() => {
+              setNoteToEdit(null);
+              setOpenAddEditModel(true);
+            }}
+          >
+            <RiStickyNoteAddFill className="text-[32px] text-white" />
+          </button>
+
+          {/* Add/Edit Modal */}
+          {openAddEditModel && (
+            <AddEditNote
+              setOpenAddEditModel={setOpenAddEditModel}
+              getAllNotes={getAllNotes}
+              noteToEdit={noteToEdit}
+            />
+          )}
+
+          {/* Profile Modal */}
+          {showProfile && (
+            <UserProfile
+              userInfo={userInfo}
+              onLogout={onLogout}
+              setShowProfile={setShowProfile}
+            />
+          )}
+
+          {/* View Note Modal */}
+          {viewNoteModal && (
+            <ViewNoteModal
+              note={selectedNote}
+              onClose={() => setViewNoteModal(false)}
+            />
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

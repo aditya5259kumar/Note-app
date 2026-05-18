@@ -12,6 +12,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -51,6 +52,8 @@ const Signup = () => {
     console.log(error);
 
     try {
+      setLoading(true);
+
       const response = await axiosInstance.post("/signup", {
         name,
         email,
@@ -61,8 +64,12 @@ const Signup = () => {
 
       if (token) {
         localStorage.setItem("token", token);
-        navigate("/");
-        toast.success("user Signed up successfully");
+
+        toast.success("User signed up successfully");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       } else {
         newErrors.signupError = "Signup failed. No token received.";
       }
@@ -70,6 +77,8 @@ const Signup = () => {
       newErrors.signupError =
         error.response?.data?.message ||
         "An unexpected error occurred. Please try again.";
+    } finally {
+      setLoading(false);
     }
     setError(newErrors);
   }
@@ -123,15 +132,24 @@ const Signup = () => {
 
             <button
               type="submit"
-              className="w-full text-white bg-linear-to-r from-purple-600 to-indigo-400 rounded p-2 my-1 mt-4 hover:bg-blue-500"
+              disabled={loading}
+              className={`w-full text-white rounded p-2 my-1 mt-4 transition-all duration-200
+  ${
+    loading
+      ? "bg-indigo-300 cursor-not-allowed"
+      : "bg-linear-to-r from-purple-600 to-indigo-400 hover:opacity-90"
+  }`}
             >
-              Signup
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+
+                  <span>Creating account...</span>
+                </div>
+              ) : (
+                "Signup"
+              )}
             </button>
-            {/* <button
-              className="flex items-center justify-center gap-2 w-full text-gray-600 border border-gray-300 bg-white rounded p-2 my-1 mt-4 hover:bg-gray-100"
-            >
-              <FcGoogle className="text-xl" /> <span>Singup with Google</span>
-            </button> */}
 
             <p className="text-sm text-center mt-4">
               Already have an Account?{" "}

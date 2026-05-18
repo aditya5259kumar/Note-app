@@ -10,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,32 +36,38 @@ const Login = () => {
 
     // login API call-
     try {
+      setLoading(true);
+
       const response = await axiosInstance.post("/login", {
         email,
         password,
       });
 
       const token = response.data?.data?.token;
-      // handle successfull login response
+
       if (token) {
         localStorage.setItem("token", token);
-        navigate("/");
-        toast.success("user Logged in successfully");
+
+        toast.success("User logged in successfully");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       } else {
         newErrors.loginError = "Login failed. No token received.";
       }
-      // handle login error
     } catch (err) {
       newErrors.loginError =
         err.response?.data?.message ||
         "An unexpected error occurred. Please try again.";
+    } finally {
+      setLoading(false);
     }
     setError(newErrors);
   }
 
   return (
     <>
-      <Home />
       <div className="absolute top-0 right-0 left-0 flex flex-colflex px-4 flex-col min-h-screen items-center justify-center bg-linear-to-l from-indigo-200 via-violet-300 to-purple-200">
         <h2 className="text-indigo-700 mb-1 text-3xl  text-center font-extrabold">
           Welcome To Notely
@@ -104,9 +111,23 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full text-white bg-linear-to-r from-purple-600 to-indigo-400 rounded p-2 my-1 mt-4 hover:bg-blue-500"
+              disabled={loading}
+              className={`w-full text-white rounded p-2 my-1 mt-4 transition-all duration-200
+  ${
+    loading
+      ? "bg-indigo-300 cursor-not-allowed"
+      : "bg-linear-to-r from-purple-600 to-indigo-400 hover:opacity-90"
+  }`}
             >
-              Login
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+
+                  <span>Logging in...</span>
+                </div>
+              ) : (
+                "Login"
+              )}
             </button>
 
             <p className="text-sm text-center mt-4">
